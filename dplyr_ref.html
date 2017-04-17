@@ -222,7 +222,9 @@ div.tocify {
 </div>
 
 
-<p><br> <br></p>
+<p><br> <br> This document serves as a reference document for some of the commands commonly used with dplyr. Examples are provided on the nycflights13 datasets: flights, planes, weather, and airports.</p>
+<pre class="r"><code>library(nycflights13)
+library(dplyr)</code></pre>
 <div id="single-table-verbs" class="section level2">
 <h2>Single Table Verbs</h2>
 <div id="filter-slice" class="section level4">
@@ -259,7 +261,7 @@ head(flights_ua_arrearly[,c(1, 5:10)])</code></pre>
 ## 5  2013            636         8      931            940        -9      UA
 ## 6  2013            645         1      910            916        -6      UA</code></pre>
 <p><br></p>
-<p><b><tt>slice(data, rownumbers)</tt></b> returns the <tt>rownumbers</tt> rows from <tt>data</tt></p>
+<p><b><tt>slice(data, rownumbers)</tt></b> returns the <tt>rownumbers</tt> rows from <tt>data</tt>. We can use <tt>n()</tt> to indicate the last row in the data.</p>
 <p><br></p>
 <p><strong>Example:</strong> Get rows 10-20 from the weather dataset.</p>
 <pre class="r"><code>weather_r1020 = slice(weather, 10:20)
@@ -275,6 +277,14 @@ head(weather_r1020)</code></pre>
 ## 6    EWR  2013     1     1    15 41.00 28.04 59.65      260   13.80936
 ## # ... with 5 more variables: wind_gust &lt;dbl&gt;, precip &lt;dbl&gt;,
 ## #   pressure &lt;dbl&gt;, visib &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<p><br></p>
+<p><strong>Example:</strong> Get the last row from the airports dataset.</p>
+<pre class="r"><code>slice(airports, n())</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##     faa         name     lat      lon   alt    tz   dst            tzone
+##   &lt;chr&gt;        &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;
+## 1   ZYP Penn Station 40.7505 -73.9935    35    -5     A America/New_York</code></pre>
+<p><br> <br></p>
 </div>
 <div id="select-rename" class="section level4">
 <h4><tt>select()</tt> &amp; <tt>rename()</tt></h4>
@@ -336,7 +346,8 @@ head(flights_sub)</code></pre>
 ## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
 ## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
 ## #   time_hour &lt;dttm&gt;</code></pre>
-<p>Note that using <tt>select()</tt> above leaves us with only three columns: Age, Gender, and Married (formerly MaritalStatus). However <tt>rename()</tt> retains all of the columns in NHANES.</p>
+<p>Note that using <tt>select()</tt> above leaves us with only seven columns: origin, year, month, day, dest, carrier, sched_arr (formerly sched_arr_time). However <tt>rename()</tt> retains all of the columns in flights</p>
+<p><br> <br></p>
 </div>
 <div id="arrange" class="section level4">
 <h4><tt>arrange()</tt></h4>
@@ -362,7 +373,7 @@ head(flights_sub)</code></pre>
 ## 10    EWR  2013     3    22   FLL      UA              1
 ## # ... with 336,766 more rows</code></pre>
 <p><br></p>
-<p><strong>Example:</strong> Sort nh_sub in descending order by arrival time, and ascending order by month</p>
+<p><strong>Example:</strong> Sort flights_sub in descending order by arrival time, and ascending order by month</p>
 <pre class="r"><code>arrange(flights_sub, desc(sched_arr_time), month)</code></pre>
 <pre><code>## # A tibble: 336,776 × 7
 ##    origin  year month   day  dest carrier sched_arr_time
@@ -378,6 +389,7 @@ head(flights_sub)</code></pre>
 ## 9     JFK  2013     1     2   LAX      B6           2359
 ## 10    EWR  2013     1     2   TPA      UA           2359
 ## # ... with 336,766 more rows</code></pre>
+<p><br> <br></p>
 </div>
 <div id="distinct" class="section level4">
 <h4><tt>distinct()</tt></h4>
@@ -407,6 +419,7 @@ head(fl_uniq_ad)</code></pre>
 ## 4      B6    JFK   BQN
 ## 5      DL    LGA   ATL
 ## 6      UA    EWR   ORD</code></pre>
+<p><br> <br></p>
 </div>
 <div id="mutate" class="section level4">
 <h4><tt>mutate()</tt></h4>
@@ -416,19 +429,19 @@ head(fl_uniq_ad)</code></pre>
 <p><br></p>
 <p><strong>Example:</strong> Add a variable to flights called <tt>arr_early</tt> that indicates if a flight arrived early.</p>
 <pre class="r"><code>fl_arrearly = mutate(flights, arr_early=as.integer(arr_delay &lt; 0))
-head(fl_arrearly[, c(1, 4:6, 9:10, ncol(fl_arrearly))])</code></pre>
-<pre><code>## # A tibble: 6 × 7
-##    year dep_time sched_dep_time dep_delay arr_delay carrier arr_early
-##   &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;chr&gt;     &lt;int&gt;
-## 1  2013      517            515         2        11      UA         0
-## 2  2013      533            529         4        20      UA         0
-## 3  2013      542            540         2        33      AA         0
-## 4  2013      544            545        -1       -18      B6         1
-## 5  2013      554            600        -6       -25      DL         1
-## 6  2013      554            558        -4        12      UA         0</code></pre>
+head(select(fl_arrearly, carrier, sched_dep_time, dep_delay, arr_delay, arr_early))</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   carrier sched_dep_time dep_delay arr_delay arr_early
+##     &lt;chr&gt;          &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;int&gt;
+## 1      UA            515         2        11         0
+## 2      UA            529         4        20         0
+## 3      AA            540         2        33         0
+## 4      B6            545        -1       -18         1
+## 5      DL            600        -6       -25         1
+## 6      UA            558        -4        12         0</code></pre>
 <p><br></p>
 <p><strong>Example:</strong> Obtain only the <tt>arr_early</tt> variable.</p>
-<pre class="r"><code>arrearly = transmute(flights, arr_early=as.integer(arr_delay &lt; 5))
+<pre class="r"><code>arrearly = transmute(flights, arr_early=as.integer(arr_delay &lt; 0))
 head(arrearly)</code></pre>
 <pre><code>## # A tibble: 6 × 1
 ##   arr_early
@@ -439,6 +452,7 @@ head(arrearly)</code></pre>
 ## 4         1
 ## 5         1
 ## 6         0</code></pre>
+<p><br> <br></p>
 </div>
 <div id="summarize" class="section level4">
 <h4><tt>summarize()</tt></h4>
@@ -446,14 +460,15 @@ head(arrearly)</code></pre>
 <p><b><tt>summarize(data, newcol=…)</tt></b> returns a data frame with <tt>newcol</tt> and one row.</p>
 <p><br></p>
 <p><strong>Example:</strong> Get the means of flight time and distance, and the proportion of flights that arrive early.</p>
-<pre class="r"><code>summarize(fl_arrearly, 
-          pctearly=mean(arr_early, na.rm=TRUE), 
-          flighttime=mean(air_time, na.rm=TRUE), 
+<pre class="r"><code>summarize(fl_arrearly, # data frame
+          pctearly=mean(arr_early, na.rm=TRUE), # summary statistics
+          flighttime=mean(air_time, na.rm=TRUE), # use na.rm=TRUE to remove NAs
           distance=mean(distance, na.rm=TRUE))</code></pre>
 <pre><code>## # A tibble: 1 × 3
 ##    pctearly flighttime distance
 ##       &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 0.5771661   150.6865 1039.913</code></pre>
+<p><br> <br></p>
 </div>
 <div id="sample_n-sample_frac" class="section level4">
 <h4><tt>sample_n()</tt> &amp; <tt>sample_frac()</tt></h4>
@@ -467,29 +482,30 @@ fl_samp1[, 1:7]</code></pre>
 <pre><code>## # A tibble: 5 × 7
 ##    year month   day dep_time sched_dep_time dep_delay arr_time
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-## 1  2013     4     5     1151           1155        -4     1302
-## 2  2013    10    21      755            759        -4      901
-## 3  2013     3     5     1637           1631         6     1821
-## 4  2013     4    25     1909           1730        99     2158
-## 5  2013     2     9       NA           1030        NA       NA</code></pre>
+## 1  2013     8    18     1827           1835        -8     2033
+## 2  2013     6     2      959            959         0     1233
+## 3  2013     6    30     1447           1110       217     1728
+## 4  2013    11     5     1418           1419        -1     1650
+## 5  2013     1    28     1348           1345         3     1643</code></pre>
 <pre class="r"><code>fl_samp2 = sample_frac(flights, .000015)
 fl_samp2[, 1:7]</code></pre>
 <pre><code>## # A tibble: 5 × 7
 ##    year month   day dep_time sched_dep_time dep_delay arr_time
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-## 1  2013     2    22     1338           1345        -7     1637
-## 2  2013     9    24     1812           1815        -3     2128
-## 3  2013     3    28     1557           1555         2     1801
-## 4  2013    10    11     1531           1429        62     1725
-## 5  2013    10    30     1221           1229        -8     1336</code></pre>
+## 1  2013    11    21      907            910        -3     1238
+## 2  2013    12    16     1549           1550        -1     1921
+## 3  2013     1    14      837            840        -3      942
+## 4  2013     8     3     1133           1120        13     1333
+## 5  2013     6    17     2147           2029        78      142</code></pre>
+<p><br></p>
 </div>
 </div>
 <div id="combining-single-table-verbs" class="section level2">
 <h2>Combining Single-Table Verbs</h2>
-<p><tt>dplyr</tt> provides an easy way to combine verbs by piping. Piping is a way of doing a sequence of operations on a data frame where the results of one operation are used as the input for subsequent one. For example, we can take a subset of rows of the NHANES dataset and then take a subset of columns.</p>
+<p><tt>dplyr</tt> provides an easy way to combine verbs by piping. Piping is a way of doing a sequence of operations on a data frame where the results of one operation are used as the input for subsequent one. For example, we can take a subset of rows of the flights dataset and then take a subset of columns.</p>
 <p>The syntax for piping involves the <tt>%&gt;%</tt> command. On either side of <tt>%&gt;%</tt> is a verb, such as those described above. For each subsequent operation, it is assumed that the data frame argument is the result of the previous verb, and hence it does not need to be included.</p>
 <p><br></p>
-<p><strong>Example:</strong> Filter only the flights that are scheduled to leave after 1500 (3:00 pm) that are early, and select their scheduled departure time, origin, destination, carrier, and distance. Arrange the data by time ascending and distance descending.</p>
+<p><strong>Example:</strong> Filter only the flights that are scheduled to leave after 1500 (3:00 pm) that arrive early, and select their scheduled departure time, origin, destination, carrier, and distance. Arrange the data by time ascending and distance descending.</p>
 <pre class="r"><code>flights_pm_early = fl_arrearly %&gt;% 
                 filter(sched_dep_time &gt; 1500) %&gt;% 
                 filter(arr_early == 1) %&gt;%
@@ -505,23 +521,25 @@ head(flights_pm_early)</code></pre>
 ## 4           1501    LGA   DEN      UA     1620
 ## 5           1501    LGA   DEN      UA     1620
 ## 6           1501    EWR   IAH      UA     1400</code></pre>
-<p>Note that our first operation does not alter the data frame. Then we filter by gender, select the relevant columns, and sort them.</p>
+<p>Note that our first operation does not alter the data frame. Then we filter by departure time and early arrival, select the relevant columns, and sort them.</p>
 <p><br></p>
-<p><strong>Example:</strong> Select only the American Airlines flights that arrive late to Denver. Select their scheduled arrival time, actual arrival time, and destination. Rename sched_arr_time to sched_arr. Order by scheduled arrival ascending.</p>
-<pre class="r"><code>fl_aa_late_den = fl_arrearly %&gt;% 
-                      filter(arr_delay &gt; 0 &amp; carrier == &quot;AA&quot;) %&gt;% 
-                      select(sched_arr=sched_arr_time, arr_time, dest) %&gt;%
+<p><strong>Example:</strong> Select only the United Airlines flights that arrive late to Denver. Select their scheduled arrival time, actual arrival time, arrival delay, carrier, and destination. Rename sched_arr_time to sched_arr. Order by scheduled arrival ascending.</p>
+<pre class="r"><code>fl_ua_late_den = flights %&gt;% 
+                      filter(arr_delay &gt; 0 &amp; carrier == &quot;UA&quot; &amp; dest == &quot;DEN&quot;) %&gt;% 
+                      select(sched_arr=sched_arr_time, arr_time, arr_delay,
+                             dest, carrier) %&gt;%
                       arrange(sched_arr)
-head(fl_aa_late_den)</code></pre>
-<pre><code>## # A tibble: 6 × 3
-##   sched_arr arr_time  dest
-##       &lt;int&gt;    &lt;int&gt; &lt;chr&gt;
-## 1        40       58   LAX
-## 2        40       57   LAX
-## 3        40       43   LAX
-## 4        40      204   LAX
-## 5        40      101   LAX
-## 6        40      125   LAX</code></pre>
+head(fl_ua_late_den)</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   sched_arr arr_time arr_delay  dest carrier
+##       &lt;int&gt;    &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;
+## 1        33       50        17   DEN      UA
+## 2       720      730        10   DEN      UA
+## 3       720      724         4   DEN      UA
+## 4       720      726         6   DEN      UA
+## 5       725      732         7   DEN      UA
+## 6       725      736        11   DEN      UA</code></pre>
+<p><br></p>
 </div>
 <div id="grouping" class="section level2">
 <h2>Grouping</h2>
@@ -531,26 +549,18 @@ head(fl_aa_late_den)</code></pre>
 <p><b><tt>group_by(data, column)</tt></b> groups <tt>data</tt> according to values in <tt>column</tt>. Data can be ungrouped with <b><tt>ungroup(data)</tt></b>.</p>
 <p><br></p>
 <p><strong>Example:</strong> Get proportion of early arrivals by carrier and by origin.</p>
-<pre class="r"><code>group_by(fl_arrearly, carrier) %&gt;% summarize(propearly=mean(arr_early, na.rm=T))</code></pre>
-<pre><code>## # A tibble: 16 × 2
-##    carrier propearly
-##      &lt;chr&gt;     &lt;dbl&gt;
-## 1       9E 0.6030993
-## 2       AA 0.6501080
-## 3       AS 0.7221439
-## 4       B6 0.5460601
-## 5       DL 0.6392001
-## 6       EV 0.5052634
-## 7       F9 0.3979442
-## 8       FL 0.3814173
-## 9       HA 0.7046784
-## 10      MQ 0.5134800
-## 11      OO 0.6551724
-## 12      UA 0.5995293
-## 13      US 0.6108114
-## 14      VX 0.6403440
-## 15      WN 0.5407672
-## 16      YV 0.5147059</code></pre>
+<pre class="r"><code>group_by(fl_arrearly, carrier) %&gt;% 
+  summarize(propearly=mean(arr_early, na.rm=T)) %&gt;% 
+  head()</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##   carrier propearly
+##     &lt;chr&gt;     &lt;dbl&gt;
+## 1      9E 0.6030993
+## 2      AA 0.6501080
+## 3      AS 0.7221439
+## 4      B6 0.5460601
+## 5      DL 0.6392001
+## 6      EV 0.5052634</code></pre>
 <pre class="r"><code>group_by(fl_arrearly, origin) %&gt;% summarize(propearly=mean(arr_early, na.rm=T))</code></pre>
 <pre><code>## # A tibble: 3 × 2
 ##   origin propearly
@@ -560,49 +570,37 @@ head(fl_aa_late_den)</code></pre>
 ## 3    LGA 0.5876112</code></pre>
 <p><br></p>
 <p><strong>Example:</strong> Get the proportion of early flights for each origin-airline combination.</p>
-<pre class="r"><code>group_by(fl_arrearly, origin, carrier) %&gt;% summarize(pearly=mean(arr_early, na.rm=T))</code></pre>
-<pre><code>## Source: local data frame [35 x 3]
-## Groups: origin [?]
+<pre class="r"><code>group_by(fl_arrearly, origin, carrier) %&gt;% 
+  summarize(pearly=mean(arr_early, na.rm=T)) %&gt;%
+  head()</code></pre>
+<pre><code>## Source: local data frame [6 x 3]
+## Groups: origin [1]
 ## 
-##    origin carrier    pearly
-##     &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;
-## 1     EWR      9E 0.6747695
-## 2     EWR      AA 0.6613143
-## 3     EWR      AS 0.7221439
-## 4     EWR      B6 0.5877627
-## 5     EWR      DL 0.5781141
-## 6     EWR      EV 0.4862959
-## 7     EWR      MQ 0.4916547
-## 8     EWR      OO 0.6666667
-## 9     EWR      UA 0.5967122
-## 10    EWR      US 0.6134998
-## # ... with 25 more rows</code></pre>
+##   origin carrier    pearly
+##    &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;
+## 1    EWR      9E 0.6747695
+## 2    EWR      AA 0.6613143
+## 3    EWR      AS 0.7221439
+## 4    EWR      B6 0.5877627
+## 5    EWR      DL 0.5781141
+## 6    EWR      EV 0.4862959</code></pre>
+<p><br> <br></p>
 </div>
 <div id="tally" class="section level4">
 <h4><tt>tally()</tt></h4>
-<p>Often it is useful to know how large the groups are. We can do this with <tt>tally()</tt>.</p>
+<p>Often it is useful to know how large the groups are. We can do this with <tt>tally()</tt>. Tally adds a column named <tt>n</tt> onto the end of the data frame that contains the counts for each group.</p>
 <p><br></p>
 <p><strong>Example:</strong> Count number of flights for each origin and for each airline.</p>
-<pre class="r"><code>group_by(flights, carrier) %&gt;% tally()</code></pre>
-<pre><code>## # A tibble: 16 × 2
-##    carrier     n
-##      &lt;chr&gt; &lt;int&gt;
-## 1       9E 18460
-## 2       AA 32729
-## 3       AS   714
-## 4       B6 54635
-## 5       DL 48110
-## 6       EV 54173
-## 7       F9   685
-## 8       FL  3260
-## 9       HA   342
-## 10      MQ 26397
-## 11      OO    32
-## 12      UA 58665
-## 13      US 20536
-## 14      VX  5162
-## 15      WN 12275
-## 16      YV   601</code></pre>
+<pre class="r"><code>group_by(flights, carrier) %&gt;% tally() %&gt;% head()</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##   carrier     n
+##     &lt;chr&gt; &lt;int&gt;
+## 1      9E 18460
+## 2      AA 32729
+## 3      AS   714
+## 4      B6 54635
+## 5      DL 48110
+## 6      EV 54173</code></pre>
 <pre class="r"><code>group_by(flights, origin) %&gt;% tally()</code></pre>
 <pre><code>## # A tibble: 3 × 2
 ##   origin      n
@@ -612,23 +610,19 @@ head(fl_aa_late_den)</code></pre>
 ## 3    LGA 104662</code></pre>
 <p><br></p>
 <p><strong>Example:</strong> Count number of flights for each origin-airline combination.</p>
-<pre class="r"><code>group_by(flights, origin, carrier) %&gt;% tally()</code></pre>
-<pre><code>## Source: local data frame [35 x 3]
-## Groups: origin [?]
+<pre class="r"><code>group_by(flights, origin, carrier) %&gt;% tally() %&gt;% head()</code></pre>
+<pre><code>## Source: local data frame [6 x 3]
+## Groups: origin [1]
 ## 
-##    origin carrier     n
-##     &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;
-## 1     EWR      9E  1268
-## 2     EWR      AA  3487
-## 3     EWR      AS   714
-## 4     EWR      B6  6557
-## 5     EWR      DL  4342
-## 6     EWR      EV 43939
-## 7     EWR      MQ  2276
-## 8     EWR      OO     6
-## 9     EWR      UA 46087
-## 10    EWR      US  4405
-## # ... with 25 more rows</code></pre>
+##   origin carrier     n
+##    &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;
+## 1    EWR      9E  1268
+## 2    EWR      AA  3487
+## 3    EWR      AS   714
+## 4    EWR      B6  6557
+## 5    EWR      DL  4342
+## 6    EWR      EV 43939</code></pre>
+<p><br> <br></p>
 </div>
 <div id="do" class="section level4">
 <h4><tt>do()</tt></h4>
@@ -712,6 +706,7 @@ summary(lmods$mod[[2]])</code></pre>
 ##   (2200 observations deleted due to missingness)
 ## Multiple R-squared:  0.03333,    Adjusted R-squared:  0.03324 
 ## F-statistic: 341.9 on 11 and 109067 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><br></p>
 </div>
 </div>
 <div id="joining-merging" class="section level2">
@@ -728,7 +723,7 @@ summary(lmods$mod[[2]])</code></pre>
 <p><br></p>
 <p><b><tt>full_join(x, y)</tt></b>: Return all rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing. This is a mutating join.</p>
 <p><br></p>
-<p>We can incorporate <tt>by=</tt> to indicate what columns to match on. If columns that you wish to match on have different names in the two datasets, you can use a list.</p>
+<p>We can incorporate <tt>by= </tt> to indicate what columns to match on. If columns that you wish to match on have different names in the two datasets, you can use a list.</p>
 <p><br></p>
 <p><strong>Example:</strong></p>
 <pre class="r"><code>flights2 &lt;- flights %&gt;% select(year:day, hour, origin, dest, tailnum, carrier)

@@ -1,8 +1,10 @@
-# install.packages('dplyr')
+# https://github.com/j3schaue/dplyr_workshop
+
+install.packages('dplyr')
 library(dplyr)
 
 ###----Load the data
-# install.packages("nycflights13")
+install.packages("nycflights13")
 library(nycflights13)
 
 head(flights)
@@ -17,7 +19,8 @@ tt = flights[((flights$sched_dep_time > 1600 & flights$carrier > "AA")|
                 (flights$sched_dep_time > 1200 & flights$carrier=="UA")), 
              c(1:3, 6, 9:10)]
 
-###----How would we get the records for each plane that appears in one row? Exactly two rows?
+###----How would we get the records for each plane that appears in one row? 
+###     Exactly two rows?
 
 
 
@@ -89,6 +92,10 @@ sample_n(airlines, 2)
 sample_frac(airlines, 2/7)
 
 
+###-------------END OF PART 1
+### Exercsies
+
+
 ###----------------------------------------------------------------------------###
 ### Combining single-table verbs
 ###----------------------------------------------------------------------------###
@@ -122,6 +129,10 @@ am_stats
 pm_stats
 am_stats - pm_stats
 
+###-------------END OF PART 2
+### Exercsies
+
+
 
 ###----------------------------------------------------------------------------###
 ### Grouping
@@ -144,6 +155,11 @@ weather %>%
             min_vis = min(visib, na.rm=T),
             max_vix = max(visib, na.rm=T),
             mn_vis = mean(visib, na.rm=T))
+
+
+###--------END OF PART 3
+### Exercises
+
 
 
 ###----------------------------------------------------------------------------###
@@ -193,5 +209,5 @@ pl_uaaa = flights %>% filter(carrier %in% c("UA", "AA")) %>%
                 semi_join(planes, ., by="tailnum")
 
 ### Only planes that are not flown by United or American
-pl_uaaa = flights %>% filger(carrier %in% c("UA", "AA")) %>%
+pl_uaaa = flights %>% filter(carrier %in% c("UA", "AA")) %>%
                 anti_join(planes, ., by="tailnum")
